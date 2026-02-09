@@ -48,7 +48,7 @@ output="$(gpg --quiet --decrypt "$real_passfile")"
 if [ -n "$otp" ] ; then
   output="$(
     echo "$output" | \
-      sed -n -r '/^otpauth/s/^.+secret=([^&]+).+$/\1/p'
+      sed -n -r '/^otpauth/s/^.+secret=([^&]+).*$/\1/p'
     )"
     if [ -z "$output" ] ; then
       echo "Error: $0: otpauth not found in $original_name" >&2
