@@ -6,6 +6,10 @@ while :; do
       otp=1
       shift
       ;;
+    fzf)
+      fzf=1
+      shift
+      ;;
     -c|--clip|-clip)
       clip=1
       shift
@@ -28,6 +32,22 @@ while :; do
 done
 
 passfile="$original_name"
+password_store="$HOME/.password-store"
+
+if [ -n "$fzf" ] && [ -t 0 ] && [ -x "$(command -v fzf)" ]  ; then
+  export FZF_DEFAULT_OPTS='--delimiter / --with-nth {5..}'
+  real_passfile=$(realpath "$password_store/${passfile}" 2>/dev/null)
+  if [ -d "$real_passfile" ] ; then
+    passfile="$(fzf --walker-root="$real_passfile")"
+  else
+    passfile="$(fzf --walker-root="$password_store" --query="$passfile")"
+  fi
+
+  if [ ! -f "$passfile" ] ; then
+    passfile="$original_name"
+  fi
+fi
+
 
 if [ "${passfile##*.}" != 'gpg' ] ; then
   passfile="${passfile}.gpg"
@@ -35,7 +55,7 @@ fi
 
 real_passfile=$(realpath "${passfile}" 2>/dev/null)
 if [ ! -f "$real_passfile" ] ; then
-  real_passfile=$(realpath "$HOME/.password-store/${passfile}" 2>/dev/null)
+  real_passfile=$(realpath "$password_store/${passfile}" 2>/dev/null)
   if [ ! -f "$real_passfile" ] ; then
     echo "Error: '$original_name' not found in password-store." >&2
     exit 1
