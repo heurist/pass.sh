@@ -35,7 +35,7 @@ passfile="$original_name"
 password_store="$HOME/.password-store"
 
 if [ -n "$fzf" ] && [ -t 0 ] && [ -x "$(command -v fzf)" ]  ; then
-  export FZF_DEFAULT_OPTS='--delimiter / --with-nth {5..}'
+  export FZF_DEFAULT_OPTS='--delimiter / --with-nth {5..} --walker-skip=.old'
   real_passfile=$(realpath "$password_store/${passfile}" 2>/dev/null)
   if [ -d "$real_passfile" ] ; then
     passfile="$(fzf --walker-root="$real_passfile")"
