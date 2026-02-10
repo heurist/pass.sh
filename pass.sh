@@ -42,6 +42,8 @@ if [ -n "$fzf" ] && [ -t 0 ] && [ -x "$(command -v fzf)" ]  ; then
   else
     passfile="$(fzf --walker-root="$password_store" --query="$passfile")"
   fi
+  ferr=$?
+  [ $ferr -gt 0 ] && exit $ferr
 
   if [ ! -f "$passfile" ] ; then
     passfile="$original_name"
