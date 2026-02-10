@@ -10,6 +10,10 @@ while [ $# -gt 0 ] ; do
       fzf=1
       shift
       ;;
+    fzy)
+      fzy=1
+      shift
+      ;;
     -c|--clip|-clip)
       clip=1
       shift
@@ -34,6 +38,7 @@ done
 passfile="$original_name"
 password_store="$HOME/.password-store"
 
+
 if [ -n "$fzf" ] && [ -t 0 ] && [ -x "$(command -v fzf)" ]  ; then
   export FZF_DEFAULT_OPTS='--delimiter / --with-nth {5..} --walker-skip=.old'
   real_passfile=$(realpath "$password_store/${passfile}" 2>/dev/null)
@@ -41,6 +46,22 @@ if [ -n "$fzf" ] && [ -t 0 ] && [ -x "$(command -v fzf)" ]  ; then
     passfile="$(fzf --walker-root="$real_passfile")"
   else
     passfile="$(fzf --walker-root="$password_store" --query="$passfile")"
+  fi
+  ferr=$?
+  [ $ferr -gt 0 ] && exit $ferr
+
+  if [ ! -f "$passfile" ] ; then
+    passfile="$original_name"
+  fi
+fi
+
+
+if [ -n "$fzy" ] && [ -t 0 ] && [ -x "$(command -v fzy)" ]  ; then
+  real_passfile=$(realpath "$password_store/${passfile}" 2>/dev/null)
+  if [ -d "$real_passfile" ] ; then
+    passfile="$password_store/$(find "$password_store" -name '.old' -prune -o -type f -path "$real_passfile/*.gpg" -printf '%P\n' | fzy)"
+  else
+    passfile="$password_store/$(find "$password_store" -name '.old' -prune -o -type f -iname '*.gpg' -printf '%P\n' | fzy --query="$passfile")"
   fi
   ferr=$?
   [ $ferr -gt 0 ] && exit $ferr
