@@ -26,6 +26,26 @@ while [ $# -gt 0 ] ; do
       quiet=1
       shift
       ;;
+    -h|--help|-help|-V|--version|-version)
+      echo 'pass v0.1'
+      echo 'a local, gpg based, password manager'
+      echo '  a simple, posix compliant, version of password-store.'
+      echo '  released into the public domain.'
+      echo "$0 [options] [command] item"
+      echo 'Example: pass email'
+      echo 'Example: pass otp website'
+      echo 'Example: pass fzf'
+      echo 'Options:'
+      echo '  -c, --clip	copy first line of file to clipboard'
+      echo '  -r, --norestore	do not wipe/restore the clipboard afterwards'
+      echo '  -h, --help	show this help message (also -v, --version)'
+      echo '  -q, --quiet	show fewer messages'
+      echo 'Commands:'
+      echo '  otp		produce totp code from otpauth:// line in file'
+      echo '  fzf		select item using fzf'
+      echo '  fzy		select item using fzy'
+      exit 0
+      ;;
     *)
       original_name=$1
       shift
