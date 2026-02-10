@@ -1,6 +1,6 @@
 #!/bin/sh
 
-while :; do
+while [ $# -gt 0 ] ; do
   case "$1" in
     otp)
       otp=1
