@@ -124,7 +124,8 @@ if [ -n "$clip" ] ; then
     if [ -z "$quiet" ] ; then
       echo "Copied $original_name to clipboard. Will clear in 45 seconds. Press Enter to clear now."
     fi
-    timeout 45 head -n1 > /dev/null
+    timeout --foreground 45 head -n1 >/dev/null 2>&1
+    [ $? -eq 1 ] && timeout 45 head -n1 > /dev/null 2>&1
     printf '%s' "$clipboard_previous" | xclip -in
   fi
 
