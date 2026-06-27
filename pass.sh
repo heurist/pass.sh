@@ -109,6 +109,10 @@ fi
 output="$(gpg --quiet --decrypt "$real_passfile")"
 
 if [ -n "$otp" ] ; then
+  if [ ! -x "$(command -v oathtool)" ] ; then
+    echo "Error: $0: oathtool not found can not produce OTP." >&2
+    exit 2
+  fi
 
   otpauth="$(echo "$output" | sed -n -r '/^otpauth/p')"
   if [ -z "$otpauth" ] ; then
