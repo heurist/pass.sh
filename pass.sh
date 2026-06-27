@@ -44,6 +44,12 @@ while [ $# -gt 0 ] ; do
       echo '  otp		produce totp code from otpauth:// line in file'
       echo '  fzf		select item using fzf'
       echo '  fzy		select item using fzy'
+      echo 'Requirements:'
+      echo '  gnupg		of course https://www.gnupg.org/'
+      echo '  xclip		for copy to clipboard https://github.com/astrand/xclip'
+      echo '  otp		oathtool from oath-toolkit https://oath-toolkit.codeberg.page'
+      echo '  fzf		fzf https://github.com/junegunn/fzf'
+      echo '  fzy		fzy https://github.com/jhawthorn/fzy'
       exit 0
       ;;
     *)
