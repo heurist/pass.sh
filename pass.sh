@@ -109,30 +109,30 @@ fi
 output="$(gpg --quiet --decrypt "$real_passfile")"
 
 if [ -n "$otp" ] ; then
-    otpauth="$(echo "$output" | sed -n -r '/^otpauth/p')"
 
-    if [ -z "$otpauth" ] ; then
-      echo "Error: $0: otpauth not found in $original_name" >&2
-      exit 3
-    fi
+  otpauth="$(echo "$output" | sed -n -r '/^otpauth/p')"
+  if [ -z "$otpauth" ] ; then
+    echo "Error: $0: otpauth not found in $original_name" >&2
+    exit 3
+  fi
 
-    secret="$(echo "$otpauth" | sed -n -r 's/^.+secret=([^&]+).*$/\1/p')"
-    if [ -z "$secret" ] ; then
-      echo "Error: $0: otp secret not found in otpauth" >&2
-      exit 4
-    fi
+  secret="$(echo "$otpauth" | sed -n -r 's/^.+secret=([^&]+).*$/\1/p')"
+  if [ -z "$secret" ] ; then
+    echo "Error: $0: otp secret not found in otpauth" >&2
+    exit 4
+  fi
 
-    period="$(echo "$otpauth" | sed -n -r 's/^.+period=([^&]+).*$/\1/p')"
-    digits="$(echo "$otpauth" | sed -n -r 's/^.+digits=([^&]+).*$/\1/p')"
-    algorithm="$(echo "$otpauth" | sed -n -r 's/^.+algorithm=([^&]+).*$/\1/p')"
+  period="$(echo "$otpauth" | sed -n -r 's/^.+period=([^&]+).*$/\1/p')"
+  digits="$(echo "$otpauth" | sed -n -r 's/^.+digits=([^&]+).*$/\1/p')"
+  algorithm="$(echo "$otpauth" | sed -n -r 's/^.+algorithm=([^&]+).*$/\1/p')"
 
-    output="$(
-      echo "$secret" | oathtool --base32 \
-        --totp="${algorithm:-SHA1}" \
-        --time-step-size="${period:-30}" \
-        --digits="${digits:-6}" \
-        -
-      )"
+  output="$(
+    echo "$secret" | oathtool --base32 \
+      --totp="${algorithm:-SHA1}" \
+      --time-step-size="${period:-30}" \
+      --digits="${digits:-6}" \
+      -
+    )"
 fi
 
 if [ -n "$clip" ] ; then
