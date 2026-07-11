@@ -42,14 +42,18 @@ while [ $# -gt 0 ] ; do
       echo '  -q, --quiet	show fewer messages'
       echo 'Commands:'
       echo '  otp		produce totp code from otpauth:// line in file'
-      echo '  fzf		select item using fzf'
-      echo '  fzy		select item using fzy'
+      echo '  fzf		select item using fzf fuzzy find'
+      echo '  fzy		select item using fzy fuzzy find'
       echo 'Requirements:'
       echo '  gnupg		of course https://www.gnupg.org/'
-      echo '  xclip		for copy to clipboard https://github.com/astrand/xclip'
-      echo '  otp		oathtool from oath-toolkit https://oath-toolkit.codeberg.page'
-      echo '  fzf		fzf https://github.com/junegunn/fzf'
-      echo '  fzy		fzy https://github.com/jhawthorn/fzy'
+      echo '  optionally one of:'
+      echo '    xclip		for copy to clipboard https://github.com/astrand/xclip'
+      echo '    xsel		for copy to clipboard https://vergenet.net/~conrad/software/xsel/'
+      echo '    wl-clipboard	for copy to clipboard https://github.com/bugaevc/wl-clipboard'
+      echo '  optionally, if you want the feature:'
+      echo '    otp		oathtool from oath-toolkit https://oath-toolkit.codeberg.page'
+      echo '    fzf		fzf https://github.com/junegunn/fzf'
+      echo '    fzy		fzy https://github.com/jhawthorn/fzy'
       exit 0
       ;;
     *)
@@ -146,9 +150,41 @@ if [ -n "$otp" ] ; then
 fi
 
 if [ -n "$clip" ] ; then
-  clipboard_previous="$(xclip -out)"
+  case "$XDG_SESSION_TYPE" in
+    x11)
+      if [ -x "$(command -v xclip2)" ] ; then
+        clip_out='xclip -out'
+        clip_in='xclip -in'
+      elif [ -x "$(command -v xsel)" ] ; then
+        clip_out='xsel --output'
+        clip_in='xsel --input'
+      else
+        echo "Error: $0: Can not find program to handle clipboard; Need \`xclip\` or \`xsel\`." >&2
+        exit 5
+      fi
+      ;;
+    wayland)
+      if [ -x "$(command -v wl-paste)" ] ; then
+        clip_out='wl-paste'
+        clip_in='wl-copy'
+      else
+        echo "Error: $0: Can not find program to handle clipboard; Need \`wl-clipboard\`." >&2
+        exit 5
+      fi
+      ;;
+    tty)
+      echo "Error: $0: Can not do clipboard without x11 or wayland; Session type: tty." >&2
+      exit 5
+      ;;
+    *)
+      echo "Error: $0: Can not do clipboard without x11 or wayland; Session type: $XDG_SESSION_TYPE." >&2
+      exit 5
+      ;;
+  esac
 
-  echo "$output" | head -n1 | xclip -in -rmlastnl
+  clipboard_previous="$($clip_out 2>/dev/null)"
+
+  echo "$output" | head -n1 | tr -d '\n' | $clip_in
 
   if [ -z "$norestore" ] && [ -z "$otp" ] ; then
     if [ -z "$quiet" ] ; then
@@ -156,11 +192,10 @@ if [ -n "$clip" ] ; then
     fi
     timeout --foreground 45 head -n1 >/dev/null 2>&1
     [ $? -eq 1 ] && timeout 45 head -n1 > /dev/null 2>&1
-    printf '%s' "$clipboard_previous" | xclip -in
+    printf '%s' "$clipboard_previous" | $clip_in
   fi
 
 else
   echo "$output"
-
 fi
 
