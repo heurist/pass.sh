@@ -24,7 +24,7 @@ The fzf and fzy subcommands skip any passwords in the `~/.password-store/.old` d
 install -p -m755 pass.sh /usr/local/bin
 ln -s pass.sh /usr/local/bin/pass
 ```
-(You probably need `sudo` or `doas` to install. This is a program that handles your secrets, make sure you know you know what you are doing.
+You probably need `sudo` or `doas` to install. This is a program that handles your secrets, make sure you know you know what you are doing.
 
 ## Quickstart
 
