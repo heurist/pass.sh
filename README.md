@@ -36,13 +36,13 @@ pass -c .template
 ```
 
 ## Requirements
-gnupg	of course (https://www.gnupg.org/)
-xclip	for copy to clipboard (https://github.com/astrand/xclip)
-otp		oathtool from oath-toolkit (https://oath-toolkit.codeberg.page)
-fzf		fzf (https://github.com/junegunn/fzf)
-fzy		fzy (https://github.com/jhawthorn/fzy)
-words   'xkcd' password generation needs a wordlist file at `/usr/share/dict/words`
-wl-clipboard    for copy to clipboard under wayland (https://github.com/bugaevc/wl-clipboard)
+- gnupg	of course (https://www.gnupg.org/)
+- xclip	for copy to clipboard (https://github.com/astrand/xclip)
+- otp		oathtool from oath-toolkit (https://oath-toolkit.codeberg.page)
+- fzf		fzf (https://github.com/junegunn/fzf)
+- fzy		fzy (https://github.com/jhawthorn/fzy)
+- words   'xkcd' password generation needs a wordlist file at `/usr/share/dict/words`
+- wl-clipboard    for copy to clipboard under wayland (https://github.com/bugaevc/wl-clipboard)
 
 
 ## TODO
